@@ -1,0 +1,92 @@
+<center><img src="http://i.imgur.com/sSaOozN.png" width="500"></center>
+
+
+## 599 FIRST ASSIGNMENT - IN GROUPS
+
+
+### Yiwen Yang, Zhiyi Wang, Ying Yang, Qiqi Wang
+
+
+Public schools in the US are offered to the kids elder than 5 years old. We would like to know how 3-to-4-year-old kids attend pre-schools and what are the influencing factors.
+
+
+We used 1% 2000 ACS data in this research. First, we would like to know the race distribution of our sample.
+
+
+```{r, echo=FALSE}
+link="https://github.com/ps0205vi/Yorozuya/raw/master/VPKdata.csv"
+mydata=read.csv(link)
+```
+
+```{r, echo=FALSE}
+names(mydata)
+```
+
+
+```{r, echo=FALSE}
+absoluteT=table(mydata$race,exclude = 'nothing')
+ToPlot=prop.table(absoluteT)
+paletteHere=rainbow(length(ToPlot))
+ToPlot=round(ToPlot*100,2)
+plotLabels=paste0(round(ToPlot,2),'%')
+titleText='The estimated race distribution \n of kids aged 3-4 in United States'
+sourceText='Source: American Community Survey (ACS)'
+pie(ToPlot,
+    labels = plotLabels,
+    col=paletteHere,
+    main=titleText,
+    cex=0.5)
+title(sub=sourceText,line = 0)
+legend(x="right", 
+       legend=names(ToPlot), 
+       fill = paletteHere,
+       bty = 'n', 
+       cex = 0.5)
+```
+
+```{r, echo=FALSE}
+paletteHere=c('gray')
+ToPlotOrd=sort(ToPlot)
+
+location=barplot(ToPlotOrd,
+     col = paletteHere,
+     border=NA,
+     main=titleText,
+     ylim=c(0,75),
+     ylab = '(in %)',
+     las=2)
+
+title(sub=sourceText,line = -10)
+
+text(x=location,y=ToPlotOrd,labels=plotLabels,
+     pos = 3,
+     cex = 0.8)
+```
+
+```{r, echo=FALSE}
+tableFreq=as.data.frame(ToPlotOrd)
+names(tableFreq)=c("race","ratio")
+library(ggplot2)
+base= ggplot(data = tableFreq, 
+             aes(x = race,
+                 y = ratio))
+plot1 = base + geom_bar(fill ="grey",
+                        stat = 'identity')
+plot2 = plot1 + labs(title=titleText,
+                     x =NULL, 
+                     y = NULL,
+                     caption = sourceText)
+plot3 = plot2 + scale_y_continuous(limits = c(0, 80),
+                                 labels=scales::unit_format(suffix = '%')) 
+plot4 = plot3 + theme(plot.caption = element_text(hjust = 0),
+                    plot.title = element_text(hjust = 0.5),
+                    axis.text.x = element_text(size=9,angle = 20),
+                    axis.ticks.length=unit(.85,"cm"),
+                    axis.ticks=element_blank())
+plot5 = plot4 + geom_text(aes(y = ratio ,
+                            label = paste0(round(ratio,2), '%')),
+                        vjust=-1, 
+                        size = 3)
+plot5 
+```
+
